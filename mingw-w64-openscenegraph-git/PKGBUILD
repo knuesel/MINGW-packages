@@ -8,43 +8,46 @@ pkgdesc="Open source high performance 3D graphics toolkit (mingw-w64)"
 arch=('any')
 url="http://www.openscenegraph.org/"
 license=("LGPL")
+groups=('sensefly')
 makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
              "${MINGW_PACKAGE_PREFIX}-pkg-config"
              "${MINGW_PACKAGE_PREFIX}-cmake"
              "git")
 depends=("${MINGW_PACKAGE_PREFIX}-gcc-libs"
-        "${MINGW_PACKAGE_PREFIX}-boost"
-        "${MINGW_PACKAGE_PREFIX}-collada-dom-svn"
-        "${MINGW_PACKAGE_PREFIX}-curl"
-        "${MINGW_PACKAGE_PREFIX}-ffmpeg"
-        "${MINGW_PACKAGE_PREFIX}-fltk"
+        #"${MINGW_PACKAGE_PREFIX}-boost"
+        #"${MINGW_PACKAGE_PREFIX}-collada-dom-svn"
+        #"${MINGW_PACKAGE_PREFIX}-curl"
+        #"${MINGW_PACKAGE_PREFIX}-ffmpeg"
+        #"${MINGW_PACKAGE_PREFIX}-fltk"
         "${MINGW_PACKAGE_PREFIX}-freetype"
         "${MINGW_PACKAGE_PREFIX}-gdal"
         "${MINGW_PACKAGE_PREFIX}-giflib"
-        "${MINGW_PACKAGE_PREFIX}-gtk2"
-        "${MINGW_PACKAGE_PREFIX}-gtkglext"
-        "${MINGW_PACKAGE_PREFIX}-jasper"
+        #"${MINGW_PACKAGE_PREFIX}-gtk2"
+        #"${MINGW_PACKAGE_PREFIX}-gtkglext"
+        #"${MINGW_PACKAGE_PREFIX}-jasper"
         "${MINGW_PACKAGE_PREFIX}-libjpeg"
         "${MINGW_PACKAGE_PREFIX}-libpng"
         "${MINGW_PACKAGE_PREFIX}-libtiff"
-        "${MINGW_PACKAGE_PREFIX}-libxml2"
-        "${MINGW_PACKAGE_PREFIX}-lua"
-        "${MINGW_PACKAGE_PREFIX}-SDL"
-        "${MINGW_PACKAGE_PREFIX}-poppler"
-        "${MINGW_PACKAGE_PREFIX}-python3"
+        #"${MINGW_PACKAGE_PREFIX}-libxml2"
+        #"${MINGW_PACKAGE_PREFIX}-lua"
+        #"${MINGW_PACKAGE_PREFIX}-SDL"
+        #"${MINGW_PACKAGE_PREFIX}-poppler"
+        #"${MINGW_PACKAGE_PREFIX}-python3"
         "${MINGW_PACKAGE_PREFIX}-qt5"
-        "${MINGW_PACKAGE_PREFIX}-wxWidgets"
-        "${MINGW_PACKAGE_PREFIX}-zlib")
+        #"${MINGW_PACKAGE_PREFIX}-wxWidgets"
+        "${MINGW_PACKAGE_PREFIX}-zlib"
+        "${MINGW_PACKAGE_PREFIX}-freeglut"
+	)
 #provides=("${MINGW_PACKAGE_PREFIX}-${_realname}")
 #conflicts=("${MINGW_PACKAGE_PREFIX}-${_realname}")
 options=('staticlibs' '!strip')
-source=("${_realname}"::"git+https://github.com/openscenegraph/osg.git"
-        osg-collada-dae-fixes.patch
-        find-collada.patch
+source=("${_realname}"::"git+https://github.com/openscenegraph/osg.git#commit=497cd65"
+        #osg-collada-dae-fixes.patch
+        #find-collada.patch
         find-freetype.patch)
 md5sums=('SKIP'
-         '45d0668f56c5e4ca58002f38fd3eb4a0'
-         '668def9c99f044db9a8215fa927d6ac2'
+         #'45d0668f56c5e4ca58002f38fd3eb4a0'
+         #'668def9c99f044db9a8215fa927d6ac2'
          '9ab69e1cd26826196fac5b3f01e6cb95')
 
 pkgver() {
@@ -54,8 +57,8 @@ pkgver() {
 
 prepare() {
   cd "${srcdir}/${_realname}"
-  patch -p1 -i ${srcdir}/osg-collada-dae-fixes.patch
-  patch -p1 -i ${srcdir}/find-collada.patch
+  #patch -p1 -i ${srcdir}/osg-collada-dae-fixes.patch
+  #patch -p1 -i ${srcdir}/find-collada.patch
   patch -p1 -i ${srcdir}/find-freetype.patch
 }
 
@@ -73,6 +76,42 @@ build() {
       local _opts="-DBUILD_OSG_EXAMPLES:BOOL=OFF -DBUILD_OSG_APPLICATIONS=OFF"
       local _postfix="-debug"
     }
+
+    declare -a _disabled_modules=(
+	QuickTime
+	FOX
+	FLTK
+	wxWidgets
+	V8
+	PythonLibs
+	ZeroConf
+	LIBLAS
+	Boost
+	NVTT
+	DirectInput
+	GtkGl
+	RSVG
+	Poppler-glib
+	SDL
+	SDL2
+	DirectShow
+	GLIB
+	GStreamer
+	FFmpeg
+	OurDCMTK
+	LibVNCServer
+	CURL
+	GTA
+	Performer
+	OpenVRML
+	Xine
+	FBX
+	COLLADA
+	OpenEXR
+	Jasper
+	Inventor
+    )
+    declare -a _disabled_modules_value=(${_disabled_modules[@]/%/=1})
     
     msg "Building ${builddir%-${MINGW_CHOST}} version..."
     
@@ -82,6 +121,7 @@ build() {
       -DCMAKE_BUILD_TYPE=${builddir%-${MINGW_CHOST}} \
       -DACTUAL_3DPARTY_DIR=${MINGW_PREFIX} \
       ${_opts} \
+      ${_disabled_modules_value[@]/#/-DCMAKE_DISABLE_FIND_PACKAGE_} \
       ../${_realname}
 
     make

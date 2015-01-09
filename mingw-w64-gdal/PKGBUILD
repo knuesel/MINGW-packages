@@ -11,15 +11,20 @@ pkgdesc="A translator library for raster geospatial data formats (mingw-w64)"
 arch=('any')
 url="http://www.gdal.org/"
 license=('custom')
+groups=('sensefly')
 makedepends=("${MINGW_PACKAGE_PREFIX}-gcc" "${MINGW_PACKAGE_PREFIX}-pkg-config" "automake" "autoconf")
-depends=("${MINGW_PACKAGE_PREFIX}-geos" "${MINGW_PACKAGE_PREFIX}-curl" "${MINGW_PACKAGE_PREFIX}-libiconv"
+depends=(
+         #"${MINGW_PACKAGE_PREFIX}-geos" "${MINGW_PACKAGE_PREFIX}-curl"
+         "${MINGW_PACKAGE_PREFIX}-libiconv"
          "${MINGW_PACKAGE_PREFIX}-giflib" "${MINGW_PACKAGE_PREFIX}-libjpeg" "${MINGW_PACKAGE_PREFIX}-libtiff"
-         "${MINGW_PACKAGE_PREFIX}-libpng" "${MINGW_PACKAGE_PREFIX}-libgeotiff" "${MINGW_PACKAGE_PREFIX}-libwebp"
-         "${MINGW_PACKAGE_PREFIX}-expat" "${MINGW_PACKAGE_PREFIX}-libfreexl" "${MINGW_PACKAGE_PREFIX}-pcre"
-         "${MINGW_PACKAGE_PREFIX}-cfitsio" "${MINGW_PACKAGE_PREFIX}-xz" "${MINGW_PACKAGE_PREFIX}-jasper"
-         "${MINGW_PACKAGE_PREFIX}-libxml2" "${MINGW_PACKAGE_PREFIX}-proj" "${MINGW_PACKAGE_PREFIX}-sqlite3"
-         "${MINGW_PACKAGE_PREFIX}-libspatialite" "${MINGW_PACKAGE_PREFIX}-hdf5" "${MINGW_PACKAGE_PREFIX}-poppler"
-         "${MINGW_PACKAGE_PREFIX}-postgresql" "${MINGW_PACKAGE_PREFIX}-xerces-c")
+         "${MINGW_PACKAGE_PREFIX}-libpng" "${MINGW_PACKAGE_PREFIX}-libgeotiff"
+         #"${MINGW_PACKAGE_PREFIX}-libwebp"
+         #"${MINGW_PACKAGE_PREFIX}-expat" "${MINGW_PACKAGE_PREFIX}-libfreexl" "${MINGW_PACKAGE_PREFIX}-pcre"
+         #"${MINGW_PACKAGE_PREFIX}-cfitsio" "${MINGW_PACKAGE_PREFIX}-xz" "${MINGW_PACKAGE_PREFIX}-jasper"
+         #"${MINGW_PACKAGE_PREFIX}-libxml2" "${MINGW_PACKAGE_PREFIX}-proj" "${MINGW_PACKAGE_PREFIX}-sqlite3"
+         #"${MINGW_PACKAGE_PREFIX}-libspatialite" "${MINGW_PACKAGE_PREFIX}-hdf5" "${MINGW_PACKAGE_PREFIX}-poppler"
+         #"${MINGW_PACKAGE_PREFIX}-postgresql" "${MINGW_PACKAGE_PREFIX}-xerces-c"
+)
 options=(strip)
 
 source=(http://download.osgeo.org/${_realname}/${pkgver}/${_realname}-${pkgver}.tar.gz
@@ -50,12 +55,74 @@ build() {
     --host=${MINGW_CHOST} \
     --target=${MINGW_CHOST} \
     --prefix=${MINGW_PREFIX} \
-    --with-poppler \
-    --with-webp \
-    --with-spatialite \
-    --with-liblzma \
-    --without-python \
-    --without-perl
+  --with-hide-internal-symbols \
+  --without-liblzma \
+  --without-pg \
+  --without-grass \
+  --without-libgrass \
+  --without-cfitsio \
+  --with-pcraster=internal \
+  --with-png \
+  --without-dds \
+  --without-gta \
+  --without-pcidsk \
+  --with-libtiff \
+  --with-geotiff \
+  --with-jpeg \
+  --without-jpeg12 \
+  --with-gif \
+  --without-ogdi \
+  --without-fme \
+  --without-sosi \
+  --without-hdf4 \
+  --without-hdf5 \
+  --without-netcdf \
+  --without-jasper \
+  --without-openjpeg \
+  --without-fgdb \
+  --without-ecw \
+  --without-kakadu \
+  --without-mrsid \
+  --without-jp2mrsid \
+  --without-mrsid_lidar \
+  --without-msg \
+  --without-bsb \
+  --without-oci \
+  --without-grib \
+  --with-ogr \
+  --without-mysql \
+  --without-ingres \
+  --without-xerces \
+  --without-expat \
+  --without-libkml \
+  --without-odbc \
+  --without-dods-root \
+  --without-curl \
+  --without-xml2 \
+  --without-spatialite \
+  --without-sqlite3 \
+  --without-pcre \
+  --without-dwgdirect \
+  --without-idb \
+  --without-sde \
+  --without-epsilon \
+  --without-webp \
+  --without-geos \
+  --without-opencl \
+  --without-freexl \
+  --with-libjson-c=internal \
+  --without-pam \
+  --without-poppler \
+  --without-podofo \
+  --without-static-proj4 \
+  --without-perl \
+  --without-php \
+  --without-ruby \
+  --without-python \
+  --without-java \
+  --without-mdb \
+  --without-rasdaman \
+  --without-armadillo
 
   sed -i GDALmake.opt -e "s|EXE_DEP_LIBS.*|EXE_DEP_LIBS = \$\(GDAL_SLIB\)|g"
   sed -i GNUmakefile -e "s|\$(GDAL_ROOT)\/||g"
